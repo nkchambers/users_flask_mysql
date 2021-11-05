@@ -1,4 +1,4 @@
-from mysqlconnection import connectToMySQL
+from flask_app.config.mysqlconnection import connectToMySQL
 
 
 # model the class after the users table from our database
@@ -13,7 +13,7 @@ class User:
 
 
 
-    # Now we use class methods to query our database
+    # READ ALL
     @classmethod
     def get_all(cls):
         query = "SELECT * FROM users;"
@@ -29,7 +29,7 @@ class User:
         
         return users
 
-
+    # CREATE
     @classmethod
     def create(cls, data):
         query = "INSERT INTO users (first_name, last_name, email, created_at, updated_at) VALUES (%(first_name)s, %(last_name)s, %(email)s, NOW(), NOW());"
@@ -38,3 +38,34 @@ class User:
         print("This is the data inside of the results after we insert into database", results)
 
         return results
+
+
+    #READ ONE
+    @classmethod
+    def get_one(cls, data):
+        query="SELECT * FROM users WHERE id = %(id)s;"
+        results = connectToMySQL("users_db").query_db(query, data)
+
+        if len(results) == 0:
+            return False
+
+        return User (results[0])
+
+
+    #UPDATE
+    @classmethod
+    def update(cls, data):
+        query = "UPDATE users SET first_name = %(first_name)s, last_name = %(last_name)s, email = %(email)s, updated_at = NOW() WHERE id = %(id)s;"
+        results = connectToMySQL("users_db").query_db(query, data)
+
+        return results
+    
+    #DELTE
+    @classmethod
+    def delete(cls, data):
+        query = "DELETE FROM users WHERE id = %(id)s;"
+        results = connectToMySQL("users_db").query_db(query, data)
+
+
+
+
